@@ -137,3 +137,50 @@ SELECT * FROM public.animals;
 /*  Commit transaction */
 
 COMMIT;
+
+
+/* How many animals are there? */
+
+SELECT COUNT(*) as animals
+FROM public.animals;
+
+/* How many animals have never tried to escape? */
+
+SELECT
+	COUNT(*) as animals_that_escape
+FROM
+	public.animals
+WHERE
+	escape_attempts = 0;
+
+/* What is the average weight of animals */
+
+SELECT
+	AVG(weight_kg) as average_weight
+FROM
+	public.animals;
+
+/* Who escapes the most, neutered or not neutered animals? */
+
+SELECT
+	are_neutered AS who_escape_most_are_neutered
+FROM
+	(SELECT
+		neutered AS are_neutered,
+		COUNT(escape_attempts) count_has_escape
+	FROM
+		public.animals
+	WHERE
+	escape_attempts <> 0
+	GROUP BY neutered) AS count_netured_has_escape
+WHERE
+	count_has_escape = (SELECT max(count_has_escape) FROM (SELECT
+		neutered AS are_neutered,
+		COUNT(escape_attempts) count_has_escape
+	FROM
+		public.animals
+	WHERE
+	escape_attempts <> 0
+	GROUP BY neutered) AS count_netured_has_escape);
+
+/* What is the minimum and maximum weight of each type of animal? */
