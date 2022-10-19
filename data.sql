@@ -46,10 +46,45 @@ UPDATE public.animals
 	SET species_id = (SELECT id FROM species WHERE name = 'Digimon')
 WHERE name LIKE '%mon';
 
-SELECT * from animals;
-
 UPDATE public.animals
 	SET species_id = (SELECT id FROM species WHERE name = 'Pokemon')
 WHERE species_id is NULL;
+
+BEGIN;
+
+/* Sam Smith owns Agumon. */
+UPDATE public.animals
+    SET owners_id = (SELECT id FROM owners WHERE full_name = 'Sam Smith')
+    WHERE
+		 name = 'Agumon';
+
+/* Jennifer Orwell owns Gabumon and Pikachu. */
+UPDATE public.animals
+    SET owners_id = (SELECT id FROM owners WHERE full_name = 'Jennifer Orwell')
+    WHERE
+		name = 'Gabumon'
+		OR name =  'Pikachu';
+
+/* Bob owns Devimon and Plantmon. */
+UPDATE public.animals
+    SET owners_id = (SELECT id FROM owners WHERE full_name = 'Bob')
+    WHERE
+		name = 'Devimon'
+		OR name =  'Plantmon';
+
+/* Melody Pond owns Charmander, Squirtle, and Blossom. */
+UPDATE public.animals
+    SET owners_id = (SELECT id FROM owners WHERE full_name = 'Melody Pond')
+    WHERE
+		name = 'Charmander'
+		OR name =  'Squirtle'
+		OR name =  'Blossom';
+
+/* Dean Winchester owns Angemon and Boarmon. */
+UPDATE public.animals
+    SET owners_id = (SELECT id FROM owners WHERE full_name = 'Dean Winchester')
+    WHERE
+		name = 'Angemon'
+		OR name =  'Boarmon';
 
 COMMIT;
