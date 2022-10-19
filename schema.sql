@@ -42,7 +42,7 @@ ALTER TABLE IF EXISTS public.owners
 CREATE IF NOT EXISTS TABLE public.species
 (
     id bigserial NOT NULL,
-    full_name character varying NOT NULL,
+    name character varying NOT NULL,
     PRIMARY KEY (id)
 );
 
