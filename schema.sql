@@ -23,3 +23,30 @@ ALTER TABLE IF EXISTS public.animals
 
 ALTER TABLE IF EXISTS public.animals
     ADD COLUMN species character varying(100);
+
+
+BEGIN;
+
+CREATE IF NOT EXISTS TABLE public.owners
+(
+    id bigserial NOT NULL,
+    full_name character varying NOT NULL,
+    age smallint NOT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT age_nonnegative CHECK (age >= 0) NOT VALID
+);
+
+ALTER TABLE IF EXISTS public.owners
+    OWNER to postgres;
+
+CREATE IF NOT EXISTS TABLE public.species
+(
+    id bigserial NOT NULL,
+    full_name character varying NOT NULL,
+    PRIMARY KEY (id)
+);
+
+ALTER TABLE IF EXISTS public.species
+    OWNER to postgres;
+
+COMMIT;
