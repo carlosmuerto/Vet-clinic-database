@@ -59,17 +59,13 @@ ALTER TABLE animals
 DROP COLUMN species;
 
 ALTER TABLE IF EXISTS public.animals
-    ADD COLUMN "species_id " bigint;
-
-
-ALTER TABLE IF EXISTS public.animals
-    ADD COLUMN species_id bigint,
+  ADD COLUMN species_id bigint,
 	ADD	CONSTRAINT fk_animals_species
 			FOREIGN KEY (species_id) REFERENCES species (id);
 
 
-ALTER TABLE IF EXISTS public.owners
-    ADD COLUMN owners_id bigint,
+ALTER TABLE IF EXISTS public.animals
+  ADD COLUMN owners_id bigint,
 	ADD	CONSTRAINT fk_animals_owners
 			FOREIGN KEY (owners_id) REFERENCES owners (id);
 
