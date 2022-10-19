@@ -58,3 +58,149 @@ FROM
 	public.animals
 WHERE
 	 weight_kg BETWEEN 10.4 AND 17.3;
+
+/* Inside a transaction update the animals table by setting the species column to unspecified. Verify that change was made. Then roll back the change and verify that the species columns went back to the state before the transaction. */
+BEGIN;
+
+UPDATE public.animals
+	SET species = 'unspecified';
+
+ROLLBACK;
+
+/* Update the animals table by setting the species column to digimon for all animals that have a name ending in mon. */
+BEGIN;
+
+UPDATE public.animals
+	SET species = 'digimon'
+WHERE name LIKE '%mon';
+
+SELECT * FROM public.animals;
+
+/* Update the animals table by setting the species column to pokemon for all animals that don't have species already set. */
+
+UPDATE public.animals
+	SET species = 'pokemon'
+WHERE species is NULL;
+
+SELECT * FROM public.animals;
+
+/*  Commit the transaction. */
+COMMIT;
+
+/*  Now, take a deep breath and... **Inside a transaction** delete all records in the `animals` table, then roll back the transaction. */
+
+BEGIN;
+
+DELETE FROM public.animals;
+
+SELECT * FROM public.animals;
+
+/* After the rollback verify if all records in the `animals` table still exists. After that, you can start breathing as usual ;)  */
+
+ROLLBACK;
+
+SELECT * FROM public.animals;
+
+/*  Delete all animals born after Jan 1st, 2022. */
+
+BEGIN;
+
+DELETE FROM public.animals
+WHERE date_of_birth > '2022-01-01';
+
+SELECT * FROM public.animals;
+
+/* Create a savepoint for the transaction. */
+
+SAVEPOINT  UpdateAllWeight;
+
+/* Update all animals' weight to be their weight multiplied by -1. */
+
+UPDATE public.animals
+	SET weight_kg = weight_kg * (-1);
+
+SELECT * FROM public.animals;
+
+/* Rollback to the savepoint */
+
+ROLLBACK TO SAVEPOINT UpdateAllWeight;
+
+
+/* Update all animals' weights that are negative to be their weight multiplied by -1. */
+
+UPDATE public.animals
+	SET weight_kg = weight_kg * (-1)
+WHERE weight_kg < 0;
+
+SELECT * FROM public.animals;
+
+/*  Commit transaction */
+
+COMMIT;
+
+
+/* How many animals are there? */
+
+SELECT COUNT(*) as animals
+FROM public.animals;
+
+/* How many animals have never tried to escape? */
+
+SELECT
+	COUNT(*) as animals_that_escape
+FROM
+	public.animals
+WHERE
+	escape_attempts = 0;
+
+/* What is the average weight of animals */
+
+SELECT
+	AVG(weight_kg) as average_weight
+FROM
+	public.animals;
+
+/* Who escapes the most, neutered or not neutered animals? */
+
+SELECT
+	are_neutered AS who_escape_most_are_neutered
+FROM
+	(SELECT
+		neutered AS are_neutered,
+		COUNT(escape_attempts) count_has_escape
+	FROM
+		public.animals
+	WHERE
+	escape_attempts <> 0
+	GROUP BY neutered) AS count_netured_has_escape
+WHERE
+	count_has_escape = (SELECT max(count_has_escape) FROM (SELECT
+		neutered AS are_neutered,
+		COUNT(escape_attempts) count_has_escape
+	FROM
+		public.animals
+	WHERE
+	escape_attempts <> 0
+	GROUP BY neutered) AS count_netured_has_escape);
+
+/* What is the minimum and maximum weight of each type of animal? */
+SELECT
+	species,
+	MIN(weight_kg),
+	MAX(weight_kg)
+FROM
+	public.animals
+GROUP BY
+	species;
+
+/*  What is the average number of escape attempts per animal type
+of those born between 1990 and 2000? */
+SELECT
+	species,
+	AVG(escape_attempts) AVG_escape_attempts
+FROM
+	public.animals
+ WHERE
+ 	date_of_birth BETWEEN '1990-01-01' AND '2000-12-31'
+GROUP BY
+	species;
