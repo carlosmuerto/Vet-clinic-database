@@ -204,3 +204,134 @@ FROM
  	date_of_birth BETWEEN '1990-01-01' AND '2000-12-31'
 GROUP BY
 	species;
+
+
+
+/* What animals belong to Melody Pond? */
+
+SELECT
+	animals.name,
+	animals.date_of_birth,
+	animals.escape_attempts,
+	animals.neutered,
+	animals.weight_kg,
+	owners.full_name as owner,
+	species.name as species
+FROM
+	animals
+	INNER JOIN owners ON owners.id = animals.owners_id
+	INNER JOIN species ON species.id = animals.species_id
+WHERE
+	owners.full_name = 'Melody Pond';
+
+/* List of all animals that are pokemon (their type is Pokemon). */
+
+SELECT
+	animals.name,
+	animals.date_of_birth,
+	animals.escape_attempts,
+	animals.neutered,
+	animals.weight_kg,
+	owners.full_name as owner,
+	species.name as species
+FROM
+	animals
+	INNER JOIN owners ON owners.id = animals.owners_id
+	INNER JOIN species ON species.id = animals.species_id
+WHERE
+	species.name = 'Pokemon';
+
+/* List all owners and their animals, remember to include those that don't own any animal. */
+
+SELECT
+	owners.full_name as owner,
+	animals.name,
+	animals.date_of_birth,
+	animals.escape_attempts,
+	animals.neutered,
+	animals.weight_kg,
+	owners.age as owner_age,
+	species.name as species
+FROM
+	animals
+	RIGHT JOIN species ON species.id = animals.species_id
+	RIGHT JOIN owners ON owners.id = animals.owners_id;
+
+/* How many animals are there per species? */
+
+SELECT
+	COUNT(*) count_per_species,
+	species.name as species
+FROM
+	animals
+	RIGHT JOIN species ON species.id = animals.species_id
+GROUP BY
+	species;
+
+/* List all Digimon owned by Jennifer Orwell. */
+
+SELECT
+	animals.name,
+	animals.date_of_birth,
+	animals.escape_attempts,
+	animals.neutered,
+	animals.weight_kg,
+	owners.full_name as owner,
+	owners.age as owner_age,
+	species.name as species
+FROM
+	animals
+	INNER JOIN owners ON owners.id = animals.owners_id
+	INNER JOIN species ON species.id = animals.species_id
+WHERE
+	owners.full_name = 'Jennifer Orwell'
+	AND species.name = 'Digimon';
+
+/* List all animals owned by Dean Winchester that haven't tried to escape. */
+
+SELECT
+	animals.name,
+	animals.date_of_birth,
+	animals.escape_attempts,
+	animals.neutered,
+	animals.weight_kg,
+	owners.full_name as owner,
+	owners.age as owner_age,
+	species.name as species
+FROM
+	animals
+	INNER JOIN owners ON owners.id = animals.owners_id
+	INNER JOIN species ON species.id = animals.species_id
+WHERE
+	owners.full_name = 'Dean Winchester'
+	AND animals.escape_attempts = 0;
+
+/* Who owns the most animals? */
+
+SELECT
+	*
+FROM (
+	SELECT
+		owners.full_name as owner,
+		COUNT(*) count_animals
+	FROM
+		animals
+		RIGHT JOIN owners ON owners.id = animals.owners_id
+	GROUP BY
+		owners.full_name
+) AS count_animals_per_owner
+WHERE
+	count_animals_per_owner.count_animals = (
+		SELECT
+			MAX(count_per_species)
+		FROM (
+			SELECT
+				owners.full_name as owner,
+				COUNT(*) count_per_species
+			FROM
+				animals
+				RIGHT JOIN owners ON owners.id = animals.owners_id
+			GROUP BY
+				owners.full_name
+		) AS count_animals_per_owner
+	);
