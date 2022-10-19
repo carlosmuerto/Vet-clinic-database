@@ -50,3 +50,27 @@ ALTER TABLE IF EXISTS public.species
     OWNER to postgres;
 
 COMMIT;
+
+/* ALTER animals table to add owners and species */
+
+BEGIN;
+
+ALTER TABLE animals
+DROP COLUMN species;
+
+ALTER TABLE IF EXISTS public.animals
+    ADD COLUMN "species_id " bigint;
+
+
+ALTER TABLE IF EXISTS public.animals
+    ADD COLUMN species_id bigint,
+	ADD	CONSTRAINT fk_animals_species
+			FOREIGN KEY (species_id) REFERENCES species (id);
+
+
+ALTER TABLE IF EXISTS public.owners
+    ADD COLUMN owners_id bigint,
+	ADD	CONSTRAINT fk_animals_owners
+			FOREIGN KEY (owners_id) REFERENCES owners (id);
+
+COMMIT;
