@@ -70,3 +70,31 @@ ALTER TABLE IF EXISTS public.animals
 			FOREIGN KEY (owners_id) REFERENCES owners (id);
 
 COMMIT;
+
+/* Create a table named vets with the following columns:  */
+
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS public.vets
+(
+	id bigserial NOT NULL,
+  name character varying NOT NULL,
+	age smallint NOT NULL,
+	PRIMARY KEY (id),
+	CONSTRAINT age_nonnegative CHECK (age >= 0) NOT VALID
+);
+
+ALTER TABLE IF EXISTS public.vets
+	OWNER to postgres;
+
+SELECT * FROM vets;
+
+CREATE TABLE IF NOT EXISTS public.specializations
+(
+	vets_id bigint REFERENCES vets (id) ON UPDATE CASCADE,
+    species_id bigint REFERENCES species (id) ON UPDATE CASCADE,
+	CONSTRAINT vets_species_pkey PRIMARY KEY (vets_id, species_id)
+);
+
+ALTER TABLE IF EXISTS public.specializations
+    OWNER to postgres;
