@@ -7,7 +7,7 @@ CREATE DATABASE vet_clinic
     CONNECTION LIMIT = -1
     IS_TEMPLATE = False;
 
-CREATE IF NOT EXISTS TABLE public.animals
+CREATE TABLE IF NOT EXISTS public.animals
 (
     id bigserial NOT NULL, /* Use Bigserial instead of bigint for the auto increment */
     name character varying(100) NOT NULL,
@@ -27,7 +27,7 @@ ALTER TABLE IF EXISTS public.animals
 
 BEGIN;
 
-CREATE IF NOT EXISTS TABLE public.owners
+CREATE TABLE IF NOT EXISTS public.owners
 (
     id bigserial NOT NULL,
     full_name character varying NOT NULL,
@@ -39,7 +39,7 @@ CREATE IF NOT EXISTS TABLE public.owners
 ALTER TABLE IF EXISTS public.owners
     OWNER to postgres;
 
-CREATE IF NOT EXISTS TABLE public.species
+CREATE TABLE IF NOT EXISTS public.species
 (
     id bigserial NOT NULL,
     name character varying NOT NULL,
@@ -70,3 +70,43 @@ ALTER TABLE IF EXISTS public.animals
 			FOREIGN KEY (owners_id) REFERENCES owners (id);
 
 COMMIT;
+
+/* Create a table named vets with the following columns:  */
+
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS public.vets
+(
+	id bigserial NOT NULL,
+	name character varying NOT NULL,
+	age smallint NOT NULL,
+	date_of_graduation date NOT NULL,
+	PRIMARY KEY (id),
+	CONSTRAINT age_nonnegative CHECK (age >= 0) NOT VALID
+);
+
+ALTER TABLE IF EXISTS public.vets
+	OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.specializations
+(
+	vets_id bigint REFERENCES vets (id) ON UPDATE CASCADE,
+	species_id bigint REFERENCES species (id) ON UPDATE CASCADE,
+	CONSTRAINT vets_species_pkey PRIMARY KEY (vets_id, species_id)
+);
+
+ALTER TABLE IF EXISTS public.specializations
+	OWNER to postgres;
+
+CREATE TABLE IF NOT EXISTS public.visits
+(
+	vets_id bigint REFERENCES vets (id) ON UPDATE CASCADE,
+	animals_id bigint REFERENCES animals (id) ON UPDATE CASCADE,
+	date_of_visits date NOT NULL;
+	CONSTRAINT vets_animals_pkey PRIMARY KEY (vets_id, animals_id, date_of_visits)
+);
+
+ALTER TABLE IF EXISTS public.visits
+    OWNER to postgres;
+
+commit;
