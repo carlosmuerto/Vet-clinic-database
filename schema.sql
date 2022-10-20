@@ -100,6 +100,18 @@ ALTER TABLE IF EXISTS public.specializations
 	OWNER to postgres;
 
 
+CREATE TABLE IF NOT EXISTS public.visits
+(
+	vets_id bigint REFERENCES vets (id) ON UPDATE CASCADE,
+    animals_id bigint REFERENCES animals (id) ON UPDATE CASCADE,
+	CONSTRAINT vets_animals_pkey PRIMARY KEY (vets_id, animals_id)
+);
+
+ALTER TABLE IF EXISTS public.visits
+    OWNER to postgres;
+
+SELECT * FROM visits;
+
 SELECT * FROM vets;
 
 commit;
