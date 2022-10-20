@@ -7,7 +7,7 @@ CREATE DATABASE vet_clinic
     CONNECTION LIMIT = -1
     IS_TEMPLATE = False;
 
-CREATE IF NOT EXISTS TABLE public.animals
+CREATE TABLE IF NOT EXISTS public.animals
 (
     id bigserial NOT NULL, /* Use Bigserial instead of bigint for the auto increment */
     name character varying(100) NOT NULL,
@@ -27,7 +27,7 @@ ALTER TABLE IF EXISTS public.animals
 
 BEGIN;
 
-CREATE IF NOT EXISTS TABLE public.owners
+CREATE TABLE IF NOT EXISTS public.owners
 (
     id bigserial NOT NULL,
     full_name character varying NOT NULL,
@@ -39,7 +39,7 @@ CREATE IF NOT EXISTS TABLE public.owners
 ALTER TABLE IF EXISTS public.owners
     OWNER to postgres;
 
-CREATE IF NOT EXISTS TABLE public.species
+CREATE TABLE IF NOT EXISTS public.species
 (
     id bigserial NOT NULL,
     name character varying NOT NULL,
