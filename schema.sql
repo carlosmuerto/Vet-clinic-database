@@ -110,8 +110,4 @@ CREATE TABLE IF NOT EXISTS public.visits
 ALTER TABLE IF EXISTS public.visits
     OWNER to postgres;
 
-SELECT * FROM visits;
-
-SELECT * FROM vets;
-
 commit;
