@@ -335,3 +335,145 @@ WHERE
 				owners.full_name
 		) AS count_animals_per_owner
 	);
+
+
+/* Who was the last animal seen by William Tatcher? */
+
+SELECT
+	date_of_visits,
+	vets.name as vet_name,
+	animals.name as animal_name
+FROM
+	visits
+	INNER JOIN vets ON vets.id = visits.vets_id
+	INNER JOIN animals ON animals.id = visits.animals_id
+WHERE
+	vets.name = 'William Tatcher'
+ORDER BY
+	date_of_visits DESC
+LIMIT 1;
+
+/* How many different animals did Stephanie Mendez see? */
+
+SELECT
+	COUNT(*) as animals_sees
+FROM
+	visits
+	INNER JOIN vets ON vets.id = visits.vets_id
+	INNER JOIN animals ON animals.id = visits.animals_id
+WHERE
+	vets.name = 'Stephanie Mendez';
+
+/* List all vets and their specialties, including vets with no specialties. */
+
+SELECT
+	vets.name as vet_name,
+	vets.age as vet_age,
+	vets.date_of_graduation,
+	species.name as specialization
+FROM
+	specializations
+	RIGHT JOIN species ON species.id = specializations.species_id
+	RIGHT JOIN vets ON vets.id = specializations.vets_id;
+
+/* List all animals that visited Stephanie Mendez between April 1st and August 30th, 2020. */
+
+SELECT
+	date_of_visits,
+	vets.name as vet_name,
+	animals.name as animal_name
+FROM
+	visits
+	INNER JOIN vets ON vets.id = visits.vets_id
+	INNER JOIN animals ON animals.id = visits.animals_id
+WHERE
+	vets.name = 'Stephanie Mendez'
+	AND visits.date_of_visits BETWEEN '01-Apr-2020' AND '30-aug-2020';
+
+/* What animal has the most visits to vets? */
+
+SELECT
+	COUNT(*) as num_of_visits,
+	animals.name as animal_name
+FROM
+	visits
+	INNER JOIN vets ON vets.id = visits.vets_id
+	INNER JOIN animals ON animals.id = visits.animals_id
+GROUP BY
+	animal_name
+ORDER BY
+	num_of_visits DESC
+LIMIT 1;
+
+/* What animal has the most visits to vets? */
+
+SELECT
+	date_of_visits,
+	vets.name as vet_name,
+	animals.name as animal_name
+FROM
+	visits
+	INNER JOIN vets ON vets.id = visits.vets_id
+	INNER JOIN animals ON animals.id = visits.animals_id
+WHERE
+	vets.name = 'Maisy Smith'
+ORDER BY
+	visits.date_of_visits ASC
+LIMIT 1;
+
+/* Details for most recent visit: animal information, vet information, and date of visit. */
+
+SELECT
+	date_of_visits,
+	vets.name as vet_name,
+	vets.age as vet_age,
+	vets.date_of_graduation as vet_date_of_graduation,
+	animals.name as animal_name,
+	animals.date_of_birth as animal_date_of_birth,
+	animals.escape_attempts as animal_escape_attempts,
+	animals.neutered as animal_neutered,
+	animals.weight_kg as animal_weight_kg,
+	species.name as animal_species
+FROM
+	visits
+	INNER JOIN animals ON animals.id = visits.animals_id
+	INNER JOIN vets ON vets.id = visits.vets_id
+	INNER JOIN species ON animals.species_id = species.id
+ORDER BY
+	date_of_visits DESC
+LIMIT 1
+
+/* How many visits were with a vet that did not specialize in that animal's species? */
+
+SELECT
+	COUNT(*) as visits_with_non_specialized_vet
+FROM
+	visits
+	INNER JOIN animals ON animals.id = visits.animals_id
+	INNER JOIN vets ON vets.id = visits.vets_id
+	INNER JOIN species ON animals.species_id = species.id
+	LEFT JOIN specializations
+		ON visits.vets_id = specializations.vets_id
+		AND animals.species_id = specializations.species_id
+WHERE
+	specializations.species_id IS NULL
+
+/* What specialty should Maisy Smith consider getting? Look for the species she gets the most. */
+
+SELECT
+	species.name as species_name_that_should_specialize
+FROM
+	visits
+	INNER JOIN animals ON animals.id = visits.animals_id
+	INNER JOIN vets ON vets.id = visits.vets_id
+	INNER JOIN species ON animals.species_id = species.id
+	LEFT JOIN specializations
+		ON visits.vets_id = specializations.vets_id
+		AND animals.species_id = specializations.species_id
+WHERE
+	vets.name = 'Maisy Smith'
+GROUP BY
+	species.name
+ORDER BY
+	COUNT(animals.species_id) DESC
+LIMIT 1;
