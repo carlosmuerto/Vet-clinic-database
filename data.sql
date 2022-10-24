@@ -374,3 +374,5 @@ INSERT INTO
 SAVEPOINT addGeneratedOwners;
 
 SELECT * FROM public.owners LIMIT 100;
+
+COMMIT;
