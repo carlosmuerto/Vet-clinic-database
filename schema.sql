@@ -110,3 +110,11 @@ ALTER TABLE IF EXISTS public.visits
     OWNER to postgres;
 
 commit;
+
+BEGIN;
+
+ALTER TABLE public.visits
+    ALTER COLUMN date_of_visits TYPE timestamp with time zone ;
+
+-- Add an email column to your owners table
+ALTER TABLE owners ADD COLUMN email VARCHAR(120);
