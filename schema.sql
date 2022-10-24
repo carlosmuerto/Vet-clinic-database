@@ -118,3 +118,13 @@ ALTER TABLE public.visits
 
 -- Add an email column to your owners table
 ALTER TABLE owners ADD COLUMN email VARCHAR(120);
+
+COMMIT;
+
+BEGIN;
+
+CREATE INDEX visits_animals_id_asc ON visits(animals_id ASC);
+
+CREATE INDEX owners_email_asc ON owners(email ASC);
+
+COMMIT;
