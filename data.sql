@@ -349,3 +349,30 @@ INSERT INTO public.visits(
 	;
 
 SAVEPOINT visitsAllInsert;
+
+BEGIN;
+
+DELETE FROM visits;
+
+SAVEPOINT  clearTable;
+
+INSERT INTO
+	visits (animals_id, vets_id, date_of_visits)
+	SELECT * FROM (SELECT id FROM animals) animals_ids,
+	(SELECT id FROM vets) vets_ids,
+	generate_series('1980-01-01'::timestamptz, '2021-01-01', '4 hours') visit_timestamp;
+
+SAVEPOINT addGeneratedVisits;
+
+INSERT INTO
+	owners (full_name, email, age)
+	SELECT 'Owner '
+		|| generate_series(1,2500000),
+		'owner_' || generate_series(1,2500000) 	|| '@mail.com',
+		19;
+
+SAVEPOINT addGeneratedOwners;
+
+SELECT * FROM public.owners LIMIT 100;
+
+COMMIT;

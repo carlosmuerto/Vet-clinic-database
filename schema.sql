@@ -110,3 +110,21 @@ ALTER TABLE IF EXISTS public.visits
     OWNER to postgres;
 
 commit;
+
+BEGIN;
+
+ALTER TABLE public.visits
+    ALTER COLUMN date_of_visits TYPE timestamp with time zone ;
+
+-- Add an email column to your owners table
+ALTER TABLE owners ADD COLUMN email VARCHAR(100);
+
+COMMIT;
+
+BEGIN;
+
+CREATE INDEX visits_animals_id_asc ON visits(animals_id ASC);
+
+CREATE INDEX owners_email_asc ON owners(email ASC);
+
+COMMIT;
